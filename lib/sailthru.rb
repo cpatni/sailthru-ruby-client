@@ -342,6 +342,19 @@ module Sailthru
       api_get(:stats, {:stat => stat})
     end
 
+    # 
+    # Push a new piece of content to Sailthru, triggering any applicable alerts.
+    # link http://docs.sailthru.com/api/content
+    # param String title
+    # param String url
+    # param array options
+    # 
+    def push_content(title, url, options = {})
+        data = options;
+        data['title'] = title;
+        data['url'] = url;
+        self.api_post('content', data);
+    end
 
     protected
 
@@ -412,10 +425,12 @@ module Sailthru
       end
 
       begin
+        puts "host and port #{_uri.host}, #{_uri.port}"
         response = Net::HTTP.start(_uri.host, _uri.port) {|http|
           http.request(req)
         }
       rescue Exception => e
+        puts e.backtrace
         raise SailthruClientException.new("Unable to open stream: #{_uri.to_s}");
       end
 
