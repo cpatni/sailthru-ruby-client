@@ -425,13 +425,13 @@ module Sailthru
       end
 
       begin
-        puts "host and port #{_uri.host}, #{_uri.port}"
         response = Net::HTTP.start(_uri.host, _uri.port) {|http|
           http.request(req)
         }
       rescue Exception => e
-        puts e.backtrace
-        raise SailthruClientException.new("Unable to open stream: #{_uri.to_s}");
+        sce =  SailthruClientException.new("Unable to open stream: #{_uri.to_s}");
+        sce.set_backtrace(e.backtrace)
+        raise sce
       end
 
       if response.body
